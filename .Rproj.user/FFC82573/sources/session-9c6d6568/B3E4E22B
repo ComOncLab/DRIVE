@@ -1,0 +1,27 @@
+{
+    "id": "B3E4E22B",
+    "path": "~/Drug_splicing/scripts/drug_sc_analysis.R",
+    "project_path": "scripts/drug_sc_analysis.R",
+    "type": "r_source",
+    "hash": "0",
+    "contents": "",
+    "dirty": false,
+    "created": 1776324764091.0,
+    "source_on_save": false,
+    "relative_order": 7,
+    "properties": {
+        "tempName": "Untitled1",
+        "source_window_id": "",
+        "Source": "Source",
+        "cursorPosition": "98,0",
+        "scrollLine": "0"
+    },
+    "folds": "",
+    "lastKnownWriteTime": 1776420306,
+    "encoding": "UTF-8",
+    "collab_server": "",
+    "source_window": "",
+    "last_content_update": 1776420306056,
+    "read_only": false,
+    "read_only_alternatives": []
+}

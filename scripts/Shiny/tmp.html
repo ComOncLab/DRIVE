@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>实验信息展示</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f8f9fa;
+            margin: 0;
+            padding: 20px;
+            color: #333;
+        }
+        
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #2c3e50 0%, #4a6491 100%);
+            color: white;
+            padding: 25px 30px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            margin: 0 0 10px 0;
+            font-size: 28px;
+            font-weight: 600;
+        }
+        
+        .header .subtitle {
+            font-size: 16px;
+            opacity: 0.85;
+        }
+        
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            padding: 30px;
+        }
+        
+        .card {
+            background-color: #fff;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+            border-left: 4px solid #3498db;
+        }
+        
+        .card.drug-info {
+            border-left-color: #e74c3c;
+        }
+        
+        .card.sample-info {
+            border-left-color: #2ecc71;
+        }
+        
+        .card-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin: 0 0 15px 0;
+            color: #2c3e50;
+            display: flex;
+            align-items: center;
+        }
+        
+        .card-title i {
+            margin-right: 8px;
+        }
+        
+        .info-row {
+            display: flex;
+            margin-bottom: 12px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        
+        .info-row:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+        
+        .info-label {
+            font-weight: 600;
+            min-width: 180px;
+            color: #555;
+        }
+        
+        .info-value {
+            color: #333;
+            flex: 1;
+        }
+        
+        .smiles-container {
+            background-color: #f8f9fa;
+            border-radius: 5px;
+            padding: 12px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            overflow-x: auto;
+            white-space: nowrap;
+            margin-top: 5px;
+            border: 1px solid #eaeaea;
+        }
+        
+        .sample-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 5px;
+        }
+        
+        .sample-badge {
+            background-color: #e8f4fc;
+            border-radius: 4px;
+            padding: 4px 10px;
+            font-size: 13px;
+            font-family: 'Courier New', monospace;
+        }
+        
+        .treatment-badge {
+            background-color: #d5f0e0;
+        }
+        
+        .control-badge {
+            background-color: #ffeaea;
+        }
+        
+        .footer {
+            text-align: center;
+            padding: 20px;
+            color: #7f8c8d;
+            font-size: 14px;
+            border-top: 1px solid #eee;
+            background-color: #fcfcfc;
+        }
+        
+        .highlight {
+            background-color: #fffacd;
+            padding: 2px 5px;
+            border-radius: 3px;
+            font-weight: 600;
+        }
+        
+        @media (max-width: 768px) {
+            .info-grid {
+                grid-template-columns: 1fr;
+                padding: 20px;
+            }
+            
+            .header {
+                padding: 20px;
+            }
+            
+            .header h1 {
+                font-size: 24px;
+            }
+            
+            .info-row {
+                flex-direction: column;
+            }
+            
+            .info-label {
+                min-width: 100%;
+                margin-bottom: 5px;
+            }
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        
+        <div class="info-grid">
+            <div class="card">
+                <h3 class="card-title"><i class="fas fa-database"></i> Datasets and Cell Line Information</h3>
+                <div class="info-row">
+                    <div class="info-label">Dataset:</div>
+                    <div class="info-value">
+                      <a href="https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE100408" 
+                         target="_blank" 
+                         class="external-link ncbi-link"
+                         title="GSE100408 in GEO">
+                         GSE100408
+                      </a>
+                    </div>
+                </div>
+                <div class="info-row">
+                    <div class="info-label">Cell Line:</div>
+                    <div class="info-value">COLO205</div>
+                </div>
+                <div class="info-row">
+                    <div class="info-label">Tissue:</div>
+                    <div class="info-value">Colon</div>
+                </div>
+                <div class="info-row">
+                    <div class="info-label">HLA-A:</div>
+                    <div class="sample-list">
+                        <span class="sample-badge treatment-badge">HLA-A*01:01</span>
+<span class="sample-badge treatment-badge">HLA-A*02:01</span>
+                    </div>
+                </div>
+                <div class="info-row">
+                    <div class="info-label">HLA-B:</div>
+                    <div class="sample-list">
+                        <span class="sample-badge treatment-badge">HLA-B*07:02</span>
+<span class="sample-badge treatment-badge">HLA-B*08:01</span>
+                    </div>
+                </div>
+                <div class="info-row">
+                    <div class="info-label">HLA-C:</div>
+                    <div class="sample-list">
+                        <span class="sample-badge treatment-badge">HLA-C*07:01</span>
+<span class="sample-badge treatment-badge">HLA-C*07:02</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card drug-info">
+                <h3 class="card-title"><i class="fas fa-pills"></i> Drug Information</h3>
+                <div class="info-row">
+                    <div class="info-label">Drug Name:</div>
+                    <div class="info-value">Ml00754792</div>
+                </div>
+                <div class="info-row">
+                    <div class="info-label">Drug Class:</div>
+                    <div class="info-value">Classical signaling pathways</div>
+                </div>
+                <div class="info-row">
+                    <div class="info-label">Drug Sub-Class:</div>
+                    <div class="info-value">SAE inhibitor</div>
+                </div>
+                <div class="info-row">
+                    <div class="info-label">Treatment Concentration:</div>
+                    <div class="info-value">500nM</div>
+                </div>
+                <div class="info-row">
+                    <div class="info-label">Treatment Time:</div>
+                    <div class="info-value">16h</div>
+                </div>
+            </div>
+            
+            <div class="card">
+                <h3 class="card-title"><i class="fas fa-flask"></i>SMILES </h3>
+                <div class="info-row" style="flex-direction: column;">
+                    <div class="smiles-container">
+                        S(N)(OC[C@@H]1[C@H](C[C@@H](C1)NC1=NC=NC=C1C(=O)C1=NN(C=C1)CC1=CC(=CC=C1)Br)O)(=O)=O
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card sample-info">
+                <h3 class="card-title"><i class="fas fa-vial"></i> Sample Information</h3>
+                <div class="info-row" style="flex-direction: column;">
+                    <div class="info-label">Treatment Group:</div>
+                    <div class="sample-list">
+                        <span class="sample-badge treatment-badge">GSM2680450</span>
+<span class="sample-badge treatment-badge">GSM2680451</span>
+<span class="sample-badge treatment-badge">GSM2680452</span>
+                    </div>
+                </div>
+                <div class="info-row" style="flex-direction: column;">
+                    <div class="info-label">Control Group:</div>
+                    <div class="sample-list">
+                        <span class="sample-badge treatment-badge">GSM2680453</span>
+<span class="sample-badge treatment-badge">GSM2680454</span>
+<span class="sample-badge treatment-badge">GSM2680455</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
