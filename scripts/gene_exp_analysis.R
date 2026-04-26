@@ -239,9 +239,9 @@ escape_up <- list(UP_Immune_Escape = c("TGFB1", "IL10", "VEGFA", "CD274", "PVR",
                                        "HTRA1", "IL2RG", "JAG1", "KHDRBS3", "MMD", "NPPB", 
                                        "NRP2", "PLA2G7", "RGS16", "ST3GAL6", "SYCP3", 
                                        "TNNT2", "VCAM1"))
-# escape_down <- readxl::read_xlsx("data/Table_S23_In vivo screen results.xlsx",sheet = 3)
-# escape_down <- escape_down %>% filter(library.annotation == "core") %>% 
-#   filter(inVitro.class == "Suppressor")
+escape_down <- readxl::read_xlsx("data/Table_S23_In vivo screen results.xlsx",sheet = 3)
+escape_down <- escape_down %>% filter(library.annotation == "core") %>%
+  filter(inVitro.class == "Suppressor")
 # library(nichenetr)
 # escape_down <- nichenetr::convert_mouse_to_human_symbols(escape_down$Gene) %>% unname()
 # escape_down <- escape_down[!is.na(escape_down)]

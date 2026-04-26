@@ -8,6 +8,7 @@ library(shinyjs)
 library(shinyalert)
 library(ggsci)
 library(ggpubr)
+library(markdown)
 cal_Xsum <- function(gene_sig, up_gene_name, down_gene_name, K=100){
   ##gene_sig is dataframe, first column is gene name, second is FC (log2FC)
   gene_sig <- gene_sig[order(gene_sig$FC,decreasing = TRUE,na.last = NA), ]
@@ -213,6 +214,9 @@ escape_up_genes <- c("TGFB1", "IL10", "VEGFA", "CD274", "PVR","PDCD1LG2",
                      "HTRA1", "IL2RG", "JAG1", "KHDRBS3", "MMD", "NPPB", 
                      "NRP2", "PLA2G7", "RGS16", "ST3GAL6", "SYCP3", 
                      "TNNT2", "VCAM1") %>% paste(.,collapse = ",") 
+all_files <- list.files("~/Drug_splicing/scripts/Shiny/data/",pattern = "_pep.rds")
+neo_files <- sample_meta %>% 
+  filter(unid %in% gsub("_binding_pep.rds","",all_files))
 
 get_drug_enrich <- function(sample_list, pathway_list, deseq_dir, ncores){
   library(doParallel)
@@ -324,15 +328,13 @@ ui <- navbarPage(
         tabsetPanel(
           tabPanel("Metadata",
                    hr(),
-                   card(
-                     uiOutput("metainfo"),
-                   )
+                   uiOutput("metainfo")
                    ),
           tabPanel("Gene Expression",
                    shinycssloaders::withSpinner(DTOutput("deseq_tab"),type = 3,color.background = "white"),
                    shinycssloaders::withSpinner(plotOutput("Volcano",height="1000px"),type = 3,color.background = "white")
                    ),
-          tabPanel("AS",
+          tabPanel("Alternative Splicing",
                    uiOutput("as_ui")
                    ) 
         )
@@ -370,7 +372,8 @@ ui <- navbarPage(
         fileInput("gene_signature_file", "Upload a gene signature file (.txt)", accept = c(".txt")),
         p("The file should have two columns (space as separator), which the frist column is",
           strong(" gene (gene ID)")," and second column is ",strong(" FC (Log2FoldChange)")),
-        actionButton("conn_analysis", "Run", class = "btn-primary")
+        actionButton("conn_analysis", "Run", class = "btn-primary"),
+        downloadButton("down_example_sig", "Download Example File", class = "btn-info")
       ),
       mainPanel(
         width = 9,
@@ -387,24 +390,55 @@ ui <- navbarPage(
     )
   ),
   # ---------------------------------
-  # 主页面 4：结果导出
-  # ---------------------------------
   tabPanel(
     title = "AS-derived Neoantigen",
     sidebarLayout(
       sidebarPanel(
-        width = 3,
-        h4("导出设置"),
-        radioButtons("export_format", "选择导出格式:", 
-                     choices = c("CSV", "TSV", "Excel")),
-        downloadButton("export_download", "下载数据", class = "btn-info")
+        width = 3, # 占比3/12,
+        selectInput("sele_drug_neo", "Select Drug:", 
+                    choices = unique(neo_files$Drug)),
+        uiOutput("sele_cell_ui_neo"),
+        uiOutput("sele_sample_ui_neo"),
+        hr(),
+        helpText("Please select drug and cell line combination")
       ),
       mainPanel(
         width = 9,
-        h4("待导出数据预览"),
-        DT::dataTableOutput("export_table")
+        card(card_header("Predicted %Rank for Peptides and HLA"),
+             shinycssloaders::withSpinner(DTOutput("pep_rank"),
+                                          type = 3,color.background = "white")),
+        card(card_header("Information of Binding Peptides"),
+             shinycssloaders::withSpinner(DTOutput("pep_meta"),
+                                          type = 3,color.background = "white")),
+        fluidRow(
+          column(
+            width = 8,
+            shinycssloaders::withSpinner(plotOutput("neo_plot",height = "500px",width = "100%"),
+                                         type = 3,color.background = "white")
+          ),
+          column(
+            width = 4,
+            wellPanel(
+              style = "font-family: 'Microsoft YaHei', sans-serif; height: 400px; overflow-y: auto;",
+              h5("This plot displays the differential alternative splicing events from the table above."),
+              tags$ul(
+                tags$li("The x-axis represents the differential expression log2FoldChange of the genes where the differential alternative splicing events are located"),
+                tags$li("The y-axis shows the delta PSI of these events."),
+                tags$li("The color indicates the reciprocal of the %Rank of the peptide with the minimum %Rank value among the peptides produced by the differential alternative splicing event."),
+                tags$li("We have labeled the top 5 ranked events. The ID is Gene-rMATS Type-rMATS ID")
+              )
+            )
+          )
+        )
       )
     )
+  ),
+  tabPanel(
+    title = "About",
+    tags$iframe(src = "DRIVE_about.html", 
+                width = "100%", 
+                style = "height: 80vh;", # vh units ensure vertical fill
+                frameBorder = "0")
   )
 )
 # ============================
@@ -418,6 +452,14 @@ server <- function(input, output, session) {
     imageWidth = 700,
     imageHeight = 525,
     animation = T,size = "l",html = T
+  )
+  output$down_example_sig <- downloadHandler(
+    filename = function() {
+      "query_example.txt"
+    },
+    content = function(file) {
+      file.copy("~/Drug_splicing/scripts/Shiny/data/example_query.txt", file)
+    }
   )
   # --- 页面1：meta信息+转录组+可变剪切 ---
   output$sele_cell_ui <- renderUI({
@@ -726,6 +768,91 @@ server <- function(input, output, session) {
     if (nrow(neg_res) > 1){
       radar_plot(neg_res[1,])
     }
+  })
+  ####
+  output$sele_cell_ui_neo <- renderUI({
+    req(input$sele_drug_neo)
+    sele_drug <- input$sele_drug_neo
+    dt <- neo_files %>% dplyr::filter(Drug == sele_drug)
+    selectInput("sele_cell_neo","Select Cell Line:",
+                choices = unique(dt$cell_line))
+  })
+  output$sele_sample_ui_neo <- renderUI({
+    req(input$sele_cell_neo)
+    dt <- neo_files %>% 
+      dplyr::filter(Drug == input$sele_drug_neo) %>% 
+      dplyr::filter(cell_line == input$sele_cell_neo)
+    selectInput("sele_sample_neo","Select Drug-Cell combination:",
+                choices = unique(dt$unid))
+  })
+  ##show tables for peptides
+  pep_dt <- reactive({
+    req(input$sele_sample_neo)
+    dt <- readRDS(paste0("~/Drug_splicing/scripts/Shiny/data/",
+                         input$sele_sample_neo,"_binding_pep.rds"))
+    dt_meta <- readRDS(paste0("~/Drug_splicing/scripts/Shiny/data/",
+                              input$sele_sample_neo,"_binding_pep_meta.rds"))
+    dt_deg <- readRDS(paste0("~/Drug_splicing/scripts/Shiny/data/",
+                             input$sele_sample_neo,"_deseq.rds"))
+    return(list(dt,dt_meta,dt_deg))
+  })
+  
+  output$pep_rank <- renderDT({
+    datatable(pep_dt()[[1]],
+              options = list(
+                autoWidth = TRUE,
+                scrollX = TRUE
+              ))
+  })
+  output$pep_meta <- renderDT({
+    datatable(pep_dt()[[2]] %>% select(-sample),
+              options = list(
+                autoWidth = TRUE,
+                scrollX = TRUE
+              ))
+  })
+  output$neo_plot <- renderPlot({
+    dt <- pep_dt()[[1]]
+    dt_meta <- pep_dt()[[2]]
+    dt_deg <- pep_dt()[[3]]
+    
+    dt_rank <- apply(dt[,3:ncol(dt)],1,min)
+    dt_rank <- data.frame(pep = dt$peptide, min_rank = dt_rank)
+    dt_meta <- left_join(dt_meta, dt_rank %>% rename(seq = pep))
+    dt_meta_summ <- dt_meta %>% 
+      group_by(rMATS_type2, rMTS_ID) %>% 
+      summarise(min_bind = min(min_rank),
+                gene = unique(geneSymbol),
+                dpsi = unique(IncLevelDifference)) %>% ungroup()
+    
+    dt_deg <- dt_deg %>% 
+      filter(symbol %in% dt_meta_summ$gene) %>% 
+      select(symbol, log2FoldChange) %>% 
+      group_by(symbol) %>% 
+      slice_max(abs(log2FoldChange), with_ties = F, na_rm = T) %>% ungroup() %>% 
+      filter(nchar(symbol) > 0) %>% as.data.frame()
+    
+    dt_meta_summ <- left_join(dt_meta_summ, dt_deg %>% rename(gene = symbol))
+    dt_meta_summ <- dt_meta_summ %>% mutate(abs_dpsi = abs(dpsi)) %>% 
+      mutate(binding = 1/min_bind)
+    ###label top ten events
+    dt_sort <- dt_meta_summ %>% 
+      arrange(desc(log2FoldChange), desc(abs_dpsi), desc(binding)) %>% 
+      rowwise() %>% 
+      mutate(ids = paste(gene, rMATS_type2, rMTS_ID, sep = "-")) %>% ungroup()
+    if (nrow(dt_sort) > 5){
+      dt_sort$ids[6:nrow(dt_sort)] <- ""
+    }
+    ggscatter(dt_sort,color ="binding",y="dpsi",x = "log2FoldChange",
+              ylab = "Delta PSI", label = "ids", repel = TRUE,
+              font.label = c(12, "plain", "#4c91c1"),size=4)+
+      scale_color_gradient2(
+        low = '#FEE5C1',
+        high = '#B70503',
+        mid = '#FC8C59',
+        limits = c(range(dt_meta_summ$binding)[1], range(dt_meta_summ$binding)[2]),
+        midpoint = (range(dt_meta_summ$binding)[2] - range(dt_meta_summ$binding)[1]) /2
+      )+labs(color = "Binding")
   })
 } 
 # ============================

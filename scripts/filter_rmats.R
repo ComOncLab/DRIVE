@@ -134,7 +134,8 @@ for (i in seq_along(rmats_counts)){
                       function(x){
                         tt <- x %>% 
                           select(ID,GeneID,geneSymbol,IJC_SAMPLE_1,IJC_SAMPLE_2,
-                                 SJC_SAMPLE_1,SJC_SAMPLE_2,PValue,FDR,type)
+                                 SJC_SAMPLE_1,SJC_SAMPLE_2,IncLevel1, IncLevel2,
+                                 IncLevelDifference, PValue,FDR,type)
                         }) %>% bind_rows() %>% 
     mutate(sample = all_files$ids[i])
   rmats_counts[[i]] <- dt_counts

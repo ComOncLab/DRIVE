@@ -50,5 +50,9 @@ for (samples in 1:length(all_samples)){
   per_res[[samples]] <- res
   message("Complete ",samples)
 }
-
+per_res <- bind_cols(per_res)
 saveRDS(per_res, "~/Drug_splicing/data/Zhang_permutation.rds")
+
+
+
+
