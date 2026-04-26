@@ -1,19 +1,3 @@
-# library(dplyr)
-# library(Seurat)
-# obj <- readRDS("~/data/obj.rds")
-# obj[["RNA"]] <- split(obj[["RNA"]], f = obj$orig.ident)
-# obj <- NormalizeData(obj)
-# obj <- FindVariableFeatures(obj)
-# obj <- ScaleData(obj)
-# obj <- RunPCA(obj)
-# ElbowPlot(obj,ndims = 50)
-# obj <- IntegrateLayers(object = obj, method = CCAIntegration, 
-#                        orig.reduction = "pca", new.reduction = "integrated.cca",
-#                        verbose = FALSE)
-# # re-join layers after integration
-# obj[["RNA"]] <- JoinLayers(obj[["RNA"]])
-# saveRDS(obj,"~/data/obj_cca.rds")
-
 # ####差异分析
 # rm(list = ls())
 # library(doParallel)
