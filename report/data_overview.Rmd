@@ -1,0 +1,119 @@
+---
+title: "Data Overview"
+author: "Tao Wu"
+date: "`r Sys.Date()`"
+output:   
+  rmdformats::readthedown:
+    highlight: kate
+    lightbox: false
+    toc_depth: 3
+    mathjax: true
+---
+
+```{r model_compare-setup, include=FALSE}
+options(max.print = "75")
+knitr::opts_chunk$set(echo = TRUE, comment = "#>", eval = TRUE, collapse = TRUE,cache = FALSE)
+knitr::opts_knit$set(width = 85)
+```
+
+Following the careful manual inspection, the retained high-confidence datasets were subjected to further analysis (The final data consist of 3,911 samples from 243 datasets, involving 931 drug-cell treatments from 272 cancer cell lines and 278 treated drugs). The statistics of the curated data reveal the broad landscape of our collection. Specifically, the distribution of cell lines categorized by their tissue origin demonstrates a diverse representation across multiple cancer types. Similarly, the distribution of sample counts according to the treated drug types highlights a wide coverage of chemotherapeutic and targeted agents.
+
+```{r fig.height = 10}
+cell_line_meta <- readRDS("..//data/cell_line_meta.rds")
+p1 <- ggpie(data = cell_line_meta, group_key = "Tissue_Source2", count_type = "full",
+      label_info = c("group","count"), label_type = "horizon",
+      label_split = "\n",
+      label_size = 4, label_pos = "out" )+
+  theme(legend.position = "none")
+
+drug_info <- readxl::read_xlsx("..//data/drug_class.xlsx")
+p2 <- ggpie(data = drug_info, group_key = "DrugClass", count_type = "full",
+      label_info = c("group","count"), label_type = "horizon",
+      label_split = "\n",
+      label_size = 4, label_pos = "out" )+
+  theme(legend.position = "none")
+p1 / p2
+```
+
+Furthermore, we evaluated the sample size distribution for both the drug-treated and control groups. Most groups have three or more samples. The result indicates a robust volume of samples in both conditions, ensuring adequate statistical power for subsequent differential expression and splicing analyses.
+
+```{r}
+all_sample_meta <- readRDS("..//data/all_sample_meta.rds")
+dt <- all_sample_meta %>% 
+  select(unid, treat_sample, control_sample) %>% 
+  rowwise() %>% 
+  mutate(treat_sample_counts = length(strsplit(treat_sample,",")[[1]]),
+         control_sample_counts = length(strsplit(control_sample,",")[[1]])) %>% 
+  ungroup()
+treat_summ <- dt %>% group_by(treat_sample_counts) %>% 
+  summarise(counts = n()) %>% ungroup() %>% mutate(log2sample = log2(counts)) %>% 
+  mutate(treat_sample_counts = as.character(treat_sample_counts))
+control_summ <- dt %>% group_by(control_sample_counts) %>% 
+  summarise(counts = n()) %>% ungroup() %>% mutate(log2sample = log2(counts)) %>% 
+  mutate(control_sample_counts = as.character(control_sample_counts))
+p1 <- ggbarplot(treat_summ, x="treat_sample_counts",y="log2sample",
+          xlab = "Sample Counts of Treatment group",
+          ylab = "Log2(# Cell Line - Treatment)",fill = "#D9AE2C")+
+  geom_text(aes(label = counts), vjust = -0.5, size = 3)
+p2 <- ggbarplot(control_summ, x="control_sample_counts",y="log2sample",
+                xlab = "Sample Counts of Control group",
+                ylab = "Log2(# Cell Line - Treatment)",fill = "#D88C27")+
+  geom_text(aes(label = counts), vjust = -0.5, size = 3)
+
+p1/p2
+
+```
+
+To provide a more granular view of the dataset composition, we also visualized the sample size distribution across the intersection of different drug classes and tissue types.
+
+```{r fig.height = 8, fig.width = 8}
+drug_info <- readxl::read_xlsx("..//data/drug_class.xlsx")
+cell_line_meta <- readRDS("..//data/cell_line_meta.rds")
+all_sample_meta <- readRDS("..//data/all_sample_meta.rds")
+drug_meta <- readxl::read_xlsx("..//data/drug_meta.xlsx")
+all_sample_meta <- left_join(all_sample_meta %>% select(-DrugType,-SMILE),
+                             drug_meta %>% distinct(Drug,.keep_all = T)) %>% 
+  left_join(., drug_info) %>% 
+  left_join(., cell_line_meta %>% select(cell_line, Tissue_Source2))
+all_sample_meta <- all_sample_meta %>% 
+  rowwise() %>% 
+  mutate(DrugClass = ifelse(grepl("\\+",Drug),"Combination Drugs",DrugClass)) %>% 
+  ungroup()
+dt <- all_sample_meta %>% 
+  mutate(DrugClass = ifelse(is.na(DrugClass),"Other_Therapeutic",DrugClass)) %>% 
+  group_by(DrugClass,Tissue_Source2) %>% 
+  summarise(counts = n()) %>% ungroup()
+
+ggplot(dt,aes(DrugClass, Tissue_Source2)) +
+  geom_point(
+    aes(fill = log2(counts+1), size = log2(counts+1)), 
+    color = 'black',
+    shape = 21
+  ) +
+  theme_minimal(
+    base_size = 16
+  ) +
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1))+
+  labs(
+    y = "Tissue",
+    fill = 'log2(#Cell Lines)'
+  ) + guides(size = "none")+
+  scale_fill_gradient2(
+    low = '#FEE5C1',
+    high = '#B70503',
+    mid = '#FC8C59',
+    limits = c(1, 7),
+    midpoint = 4
+  ) +
+  scale_size_area(
+    limits = c(1, 7),
+    max_size = 7
+  ) +
+  coord_cartesian() + 
+  theme(legend.position = 'top')
+
+```
+
+
+
+

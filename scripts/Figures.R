@@ -354,7 +354,7 @@ ggsave("Figs/drug_class_sim_compare.pdf",width = 10,height = 8)
 #   theme_ridges(center_axis_labels = T)+
 #   theme(legend.position = "none")
 # p1/p2
-ggsave("Figs/drug_class_sim_compare.pdf",width = 10,height = 10)
+# ggsave("Figs/drug_class_sim_compare.pdf",width = 10,height = 10)
 #####
 ####同一组织来源的细胞系中，不同类型的药物之间的相似性
 ####

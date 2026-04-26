@@ -1,0 +1,62 @@
+---
+title: "DRIVE: a comprehensive resource deciphering drug-induced transcriptomic response, alternative splicing, and splicing-derived neoantigens in cancer cell lines"
+author: ["Tao Wu"]
+date: "`r Sys.Date()`"
+output:
+  rmdformats::readthedown:
+    highlight: kate
+    toc_depth: 3
+    self_contained: false
+---
+
+
+```{r knitr_init, echo=FALSE,warning=FALSE}
+library(knitr)
+library(rmdformats)
+## Global options
+options(max.print = "85")
+opts_chunk$set(
+  echo = TRUE,
+  comment = "#>",
+  dpi = 300,
+  cache = FALSE
+)
+opts_knit$set(width = 85)
+Sys.setenv("LANGUAGE"="EN")
+```
+
+# Dependencies
+
+```{r lib, eval=TRUE, include=TRUE, message=FALSE}
+library(dplyr)
+library(ggplot2)
+library(ggpubr)
+library(ggpie)
+library(patchwork)
+library(ggrain)
+library(ggsci)
+```
+
+# Data overview 
+
+```{r child = 'data_overview.Rmd'}
+```
+
+# Drug-induced transcriptomic rewiring and identification of potential immunomodulatory agents
+
+```{r child = 'trans_and_drug_sim.Rmd'}
+```
+
+# Drug-induced shift of alternative splicing
+
+```{r child = 'as_analysis.Rmd'}
+```
+
+# Characterization of potential neoantigen derived from drug-induced differential AS
+
+```{r child = 'neo_analysis.Rmd'}
+```
+
+
+
+

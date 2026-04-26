@@ -345,13 +345,18 @@ ggplot(data = res_summ,
   scale_fill_npg()+
   guides(fill = "none")
 ggsave("Figs/as_neo_Alluvial.pdf",width = 6,height = 7)
-# rMATS_type2    per
-# <chr>        <dbl>
-# 1 A3SS        0.0202
-# 2 A5SS        0.0199
-# 3 MXE         0.0204
-# 4 RI          0.0207
-# 5 SE          0.0205
+
+res_summ %>% 
+  group_by(rMATS_type2) %>%
+  summarise(binding_per = total_counts[type == "binding"]/total_counts[type == "no_binding"])
+# A tibble: 5 × 2
+# rMATS_type2 binding_per
+# <chr>             <dbl>
+#   1 A3SS             0.0206
+# 2 A5SS             0.0203
+# 3 MXE              0.0208
+# 4 RI               0.0212
+# 5 SE               0.0209
 
 ##############人类常见HLA，考虑基因表达
 samples <- readRDS("~/Drug_splicing/data/samples_with_HLA.rds")

@@ -1,0 +1,14 @@
+{
+"input_sequence_text_file_path": "split_fa/test.fasta",
+"peptide_length_range": [
+  8,
+  11
+],
+"alleles": "H2-Kb,H2-Kd",
+  "predictors": [
+    {
+      "type": "binding",
+      "method": "netmhcpan_el"
+    }
+  ]
+}
