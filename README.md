@@ -12,6 +12,7 @@ This repository contains code for the processing pipeline of raw data, reproduci
    - [processing matched treatment and control samples](./scripts/raw_data_processing/run_gse): Extract FASTQ, QC, mapping, Transcript and gene expression quantification, HLA typing.
    - [translate into protein sequences](./scripts/raw_data_processing/run_jcast): predict peptides using [Jcast](https://github.com/ed-lau/jcast)
    - [predicting HLA binding](./scripts/raw_data_processing/run_binding): predicting HLA binding using NetMHCpan4.1
-2. The data for analysis in manuscript and shiny app is available in Zenodo with DOI: 
-3. The analysis report can be view online in https://comonclab.github.io/DRIVE/
+2. [Shiny Web app](./scripts/Shiny): Code and resource for building Shiny app. 
+3. The data for analysis in manuscript and shiny app is available in Zenodo with DOI: 
+4. The analysis report can be view online in https://comonclab.github.io/DRIVE/
 
