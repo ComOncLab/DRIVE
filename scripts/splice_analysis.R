@@ -251,9 +251,9 @@ p2 <- ggboxplot(dt1,x="type",y="per",facet.by = "as_type",add = "jitter",
   scale_fill_npg()+
   theme(legend.position = "none")
 library(patchwork)
-p <- p1+p2+plot_layout(widths = c(4,2))
-cairo_pdf("Figs/Indisulam_as.pdf",width = 13,height = 5)
-print(p)
+# p <- p1+p2+plot_layout(widths = c(4,2))
+cairo_pdf("Figs/Indisulam_as.pdf",width = 8,height = 5)
+print(p1)
 dev.off()
 
 #####其他药物
@@ -275,7 +275,7 @@ print(p)
 dev.off()
 
 #####剪切体GSEA
-mapping <- readRDS("~/Drug_splicing/data/human_id_mapping.rds")
+mapping <- readRDS("data/human_id_mapping.rds")
 mapping <- mapping %>% select(gene_id_version, symbol) %>% distinct_all()
 sp_path <- fgsea::gmtPathways("data/KEGG_SPLICEOSOME.v2026.1.Hs.gmt")
 

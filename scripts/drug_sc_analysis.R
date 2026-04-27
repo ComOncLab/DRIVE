@@ -101,6 +101,9 @@ p2 <- ggpaired(dt, cond1 = "pre", cond2 = "post",
   stat_compare_means(paired = T)+
   scale_fill_npg()+
   guides(fill = 'none', color = 'none')
+p1 + p2 
+ggsave("Figs/cell_rep_med_res.pdf",width = 8,height = 5)
+
 
 dt <- res %>%
   select(patient, type, Dysfunction) %>% 

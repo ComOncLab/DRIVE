@@ -1,12 +1,12 @@
 library(dplyr)
 ##GSE174498_CEM_L-asparaginase 没有输出结果
-# sample_meta <- readRDS("~/Drug_splicing/data/all_sample_meta.rds")
+# sample_meta <- readRDS("~/DRIVE/data/all_sample_meta.rds")
 # sample_meta <- sample_meta %>% filter(unid != "GSE174498_CEM_L-asparaginase")
-rmats_counts <- readRDS("~/Drug_splicing/data/rmats_filter.rds")
+rmats_counts <- readRDS("~/DRIVE/data/rmats_filter.rds")
 rmats_counts <- rmats_counts %>% filter(sample != "GSE174498_CEM_L-asparaginase")
 rmats_counts <- rmats_counts %>% filter((abs(IncLevelDifference) > 0.1) & (FDR <0.05))
 all_samples <- unique(rmats_counts$sample)
-samples <- readRDS("~/Drug_splicing/data/samples_with_HLA.rds")
+samples <- readRDS("~/DRIVE/data/samples_with_HLA.rds")
 all_samples <- intersect(all_samples, samples$unid)
 # done_files <- list.files("scripts/Shiny/data/",pattern = "pep_meta.rds",full.names = T)
 # done_meta_info <- file.info(done_files)
@@ -86,10 +86,10 @@ res <- foreach(
     select(seq, pep_len, rMTS_ID, sample, everything())
   dt_all <- dt_all %>% filter(peptide %in% dt_meta$seq)
   saveRDS(dt_meta, 
-          paste0("~/Drug_splicing/scripts/Shiny/data/",
+          paste0("~/DRIVE/scripts/Shiny/data/",
                  all_samples[i], "_binding_pep_meta.rds"))
   saveRDS(dt_all, 
-          paste0("~/Drug_splicing/scripts/Shiny/data/",
+          paste0("~/DRIVE/scripts/Shiny/data/",
                  all_samples[i], "_binding_pep.rds"))
 }
 parallel::stopCluster(cl = my.cluster)
@@ -97,7 +97,7 @@ parallel::stopCluster(cl = my.cluster)
 
 ######统计
 all_files <- list.files("scripts/Shiny/data/",pattern = "_pep.rds")
-sample_meta <- readRDS("~/Drug_splicing/data/all_sample_meta.rds")
+sample_meta <- readRDS("~/DRIVE/data/all_sample_meta.rds")
 sample_meta <- sample_meta %>% 
   filter(unid %in% gsub("_binding_pep.rds","",all_files))
 
@@ -115,7 +115,7 @@ res <- foreach(
   i = sample_meta$unid,
   .packages = c("dplyr")
 ) %dopar% {
-  dt <- readRDS(paste0("~/Drug_splicing/scripts/Shiny/data/",i,"_binding_pep.rds"))
+  dt <- readRDS(paste0("~/DRIVE/scripts/Shiny/data/",i,"_binding_pep.rds"))
   dt <- dt %>%
     select(-binding_counts) %>% 
     tidyr::pivot_longer(cols = 2:ncol(.), names_to = "allel", values_to = "rank")
@@ -135,12 +135,14 @@ parallel::stopCluster(cl = my.cluster)
 res <- bind_rows(res)
 sample_meta <- left_join(sample_meta, res)
 
-spres <- readRDS("~/Drug_splicing/data/rmats_fdr01.rds")
+spres <- readRDS("~/DRIVE/data/rmats_fdr01.rds")
 spres <- spres %>% 
   group_by(ids) %>% summarise(t_counts = sum(counts)) %>% ungroup()
 sample_meta <- left_join(sample_meta, spres %>% rename(unid = ids))
 saveRDS(sample_meta,"data/sample_neo.rds")
 
+###
+sample_meta <- readRDS("data/sample_neo.rds")
 sample_meta <- sample_meta %>% mutate(log2counts = log2(sb_counts))
 ord <- sample_meta %>% group_by(Tissue_Source2) %>% 
   summarise(med = median(log2counts)) %>% 
@@ -206,7 +208,7 @@ ggsave("Figs/cor_neo_as.pdf",width = 6, height = 5)
 
 #########不同类型的可变剪切导致的新抗原数量
 all_files <- list.files("scripts/Shiny/data/",pattern = "_pep_meta.rds")
-sample_meta <- readRDS("~/Drug_splicing/data/all_sample_meta.rds")
+sample_meta <- readRDS("~/DRIVE/data/all_sample_meta.rds")
 sample_meta <- sample_meta %>% 
   filter(unid %in% gsub("_binding_pep_meta.rds","",all_files))
 
@@ -221,8 +223,8 @@ res <- foreach(
   i = sample_meta$unid,
   .packages = c("dplyr")
 ) %dopar% {
-  dt_meta <- readRDS(paste0("~/Drug_splicing/scripts/Shiny/data/",i,"_binding_pep_meta.rds"))
-  dt <- readRDS(paste0("~/Drug_splicing/scripts/Shiny/data/",i,"_binding_pep.rds"))
+  dt_meta <- readRDS(paste0("~/DRIVE/scripts/Shiny/data/",i,"_binding_pep_meta.rds"))
+  dt <- readRDS(paste0("~/DRIVE/scripts/Shiny/data/",i,"_binding_pep.rds"))
   dt <- dt %>%
     select(-binding_counts) %>% 
     tidyr::pivot_longer(cols = 2:ncol(.), names_to = "allel", values_to = "rank")
@@ -243,6 +245,10 @@ res <- foreach(
 parallel::stopCluster(cl = my.cluster)
 
 res <- bind_rows(res)
+saveRDS(res, "data/AS_type_neo.rds")
+
+###
+res <- readRDS("data/AS_type_neo.rds")
 res <- res %>% mutate(log2counts = log2(counts))
 res_summ <- res %>% group_by(rMATS_type2) %>% 
   summarise(median_c = median(counts)) %>% ungroup() %>% 
@@ -259,12 +265,12 @@ ggviolin(res,x="rMATS_type2",y="log2counts",add = "boxplot",
 ggsave("Figs/as_type_neo_diff.pdf",width = 6,height = 6)  
   
 ####桑吉图
-rmats_counts <- readRDS("~/Drug_splicing/data/rmats_filter.rds")
+rmats_counts <- readRDS("~/DRIVE/data/rmats_filter.rds")
 rmats_counts <- rmats_counts %>% filter(sample != "GSE174498_CEM_L-asparaginase")
 rmats_counts <- rmats_counts %>% filter((abs(IncLevelDifference) > 0.1) & (FDR <0.05))
 
 all_files <- list.files("scripts/Shiny/data/",pattern = "_pep_meta.rds")
-sample_meta <- readRDS("~/Drug_splicing/data/all_sample_meta.rds")
+sample_meta <- readRDS("~/DRIVE/data/all_sample_meta.rds")
 sample_meta <- sample_meta %>% 
   filter(unid %in% gsub("_binding_pep_meta.rds","",all_files))
 
@@ -279,8 +285,8 @@ res <- foreach(
   i = sample_meta$unid,
   .packages = c("dplyr")
 ) %dopar% {
-  dt_meta <- readRDS(paste0("~/Drug_splicing/scripts/Shiny/data/",i,"_binding_pep_meta.rds"))
-  dt <- readRDS(paste0("~/Drug_splicing/scripts/Shiny/data/",i,"_binding_pep.rds"))
+  dt_meta <- readRDS(paste0("~/DRIVE/scripts/Shiny/data/",i,"_binding_pep_meta.rds"))
+  dt <- readRDS(paste0("~/DRIVE/scripts/Shiny/data/",i,"_binding_pep.rds"))
   dt <- dt %>%
     select(-binding_counts) %>% 
     tidyr::pivot_longer(cols = 2:ncol(.), names_to = "allel", values_to = "rank")
@@ -359,7 +365,7 @@ res_summ %>%
 # 5 SE               0.0209
 
 ##############人类常见HLA，考虑基因表达
-samples <- readRDS("~/Drug_splicing/data/samples_with_HLA.rds")
+samples <- readRDS("~/DRIVE/data/samples_with_HLA.rds")
 top_hlas <- samples %>% 
   filter(grepl("HLA-A*02:01",HLA,fixed = T) | grepl("HLA-A*24:02",HLA,fixed = T) | grepl("HLA-C*04:01",HLA,fixed = T))
 all_samples <- unique(top_hlas$unid)
@@ -378,7 +384,7 @@ res <- foreach(
   i = all_samples,
   .packages = c("dplyr")
 ) %dopar% {
-  dt <- readRDS(paste0("~/Drug_splicing/scripts/Shiny/data/",i,"_binding_pep.rds"))
+  dt <- readRDS(paste0("~/DRIVE/scripts/Shiny/data/",i,"_binding_pep.rds"))
   dt <- dt %>%
     select(-binding_counts) %>% 
     tidyr::pivot_longer(cols = 2:ncol(.), names_to = "allel", values_to = "rank")
@@ -391,10 +397,10 @@ res <- foreach(
     summarise(both_sb = n()) %>% ungroup() %>% filter(both_sb == 2) 
   dt_filter <- dt_filter %>% filter(peptide %in% dt_filter_summ$peptide)
   
-  dt_meta <- readRDS(paste0("~/Drug_splicing/scripts/Shiny/data/",i,"_binding_pep_meta.rds"))
+  dt_meta <- readRDS(paste0("~/DRIVE/scripts/Shiny/data/",i,"_binding_pep_meta.rds"))
   dt_meta <- dt_meta %>% filter(seq %in% dt_filter$peptide)
   
-  gene_exp <- readRDS(paste0("~/Drug_splicing/scripts/Shiny/data/",i,"_deseq.rds"))
+  gene_exp <- readRDS(paste0("~/DRIVE/scripts/Shiny/data/",i,"_deseq.rds"))
   gene_exp <- gene_exp %>% 
     select(symbol, log2FoldChange) %>% 
     group_by(symbol) %>% 
@@ -416,8 +422,13 @@ res <- foreach(
 parallel::stopCluster(cl = my.cluster)
 
 res <- bind_rows(res)
-sample_meta <- readRDS("~/Drug_splicing/data/all_sample_meta.rds")
+saveRDS(res,"data/topHLA_neo.rds")
+
+###
+res <- readRDS("data/topHLA_neo.rds")
+sample_meta <- readRDS("~/DRIVE/data/all_sample_meta.rds")
 res <- left_join(res,sample_meta)
+
 ###至少有三个细胞系的药物
 res_summ <- res %>% group_by(Drug) %>% summarise(cell_c = length(unique(cell_line))) %>% 
   ungroup() %>% filter(cell_c >= 3)
@@ -442,8 +453,8 @@ draw(p)
 dev.off()
 
 ############onvansertib 药物分析
-sample_meta <- readRDS("~/Drug_splicing/data/all_sample_meta.rds")
-samples <- readRDS("~/Drug_splicing/data/samples_with_HLA.rds")
+sample_meta <- readRDS("~/DRIVE/data/all_sample_meta.rds")
+samples <- readRDS("~/DRIVE/data/samples_with_HLA.rds")
 onv_sample <- sample_meta %>% filter(Drug == "onvansertib")
 onv_hla <- samples %>% filter(unid %in% onv_sample$unid)
 indi_sample <- sample_meta %>% filter(Drug == "Indisulam")
@@ -451,14 +462,14 @@ indi_hla <- samples %>% filter(unid %in% indi_sample$unid)
 overlap_hla <- intersect(paste0(indi_hla$HLA,collapse = ",") %>% strsplit(.,",") %>% `[[`(1),
                          paste0(onv_hla$HLA,collapse = ",") %>% strsplit(.,",") %>% `[[`(1))
 all_samples <- c(onv_hla$unid, indi_hla$unid) %>% unique()
-rmats_counts <- readRDS("~/Drug_splicing/data/rmats_filter.rds")
+rmats_counts <- readRDS("~/DRIVE/data/rmats_filter.rds")
 rmats_counts <- rmats_counts %>% filter((abs(IncLevelDifference) > 0.1) & (FDR <0.05))
 dt_res <- rmats_counts %>% 
   filter(sample %in% all_samples)
 
 res <- vector("list",length(all_samples))
 for (i in 1:length(all_samples)){
-  dt <- readRDS(paste0("~/Drug_splicing/scripts/Shiny/data/",all_samples[i],"_binding_pep.rds"))
+  dt <- readRDS(paste0("~/DRIVE/scripts/Shiny/data/",all_samples[i],"_binding_pep.rds"))
   dt <- dt %>%
     select(-binding_counts) %>% 
     tidyr::pivot_longer(cols = 2:ncol(.), names_to = "allel", values_to = "rank")
@@ -471,7 +482,7 @@ for (i in 1:length(all_samples)){
     summarise(both_sb = n()) %>% ungroup() %>% filter(both_sb == 2) 
   dt_filter <- dt_filter %>% filter(peptide %in% dt_filter_summ$peptide)
   
-  dt_meta <- readRDS(paste0("~/Drug_splicing/scripts/Shiny/data/",all_samples[i],
+  dt_meta <- readRDS(paste0("~/DRIVE/scripts/Shiny/data/",all_samples[i],
                             "_binding_pep_meta.rds"))
   dt_meta <- dt_meta %>% filter(seq %in% dt_filter$peptide)
   dt_meta <- dt_meta %>% mutate(ids = paste0(rMATS_type2,"_",rMTS_ID))
@@ -498,6 +509,8 @@ for (i in 1:length(all_samples)){
 
 res <- bind_rows(res)
 saveRDS(res,"data/Indisulam_onvansertib_neoas.rds")
+###
+res <- readRDS("data/Indisulam_onvansertib_neoas.rds")
 res_summ <- res %>% group_by(sample) %>% 
   summarise(neo_counts = length(unique(seq)),
             as_counts = unique(dev_events)) %>% ungroup() %>% 

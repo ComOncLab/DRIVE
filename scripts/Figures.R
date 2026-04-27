@@ -45,7 +45,7 @@ saveRDS(res,"data/srr_info.rds")
 
 #######细胞系癌症类型分布，药物类型分布
 library(ggpie)
-cell_line_meta <- readRDS("~/Drug_splicing/data/cell_line_meta.rds")
+cell_line_meta <- readRDS("~/DRIVE/data/cell_line_meta.rds")
 #cell_line_meta$cell_line[35] <- "92-1"
 #saveRDS(cell_line_meta,"data/cell_line_meta.rds")
 p1 <- ggpie(data = cell_line_meta, group_key = "Tissue_Source2", count_type = "full",
@@ -66,7 +66,7 @@ ggsave("Figs/cell_drug_info.pdf",width = 14, height = 8)
 
 ####细胞系乘以药物热图
 drug_info <- readxl::read_xlsx("data/drug_class.xlsx")
-cell_line_meta <- readRDS("~/Drug_splicing/data/cell_line_meta.rds")
+cell_line_meta <- readRDS("~/DRIVE/data/cell_line_meta.rds")
 all_sample_meta <- readxl::read_xlsx("data/all_sample_meta.xlsx")
 drug_meta <- readxl::read_xlsx("data/drug_meta.xlsx")
 all_sample_meta <- left_join(all_sample_meta %>% select(-DrugType,-SMILE) %>% 
@@ -239,7 +239,7 @@ cal_ken_par <- function(var_dt, ncores){
 }
 
 cor_res <- cal_ken_par(rank_res,ncores = 60)
-saveRDS(cor_res,"~/Drug_splicing/data/deseq2_cor.rds")
+saveRDS(cor_res,"~/DRIVE/data/deseq2_cor.rds")
 
 ####SMILE表示相似性
 library(rcdk)
@@ -279,7 +279,7 @@ saveRDS(molformer_sim, "data/drug_molformer_sim.rds")
 #######
 sample_meta <- readRDS("data/all_sample_meta.rds")
 cor_res <- readRDS("data/deseq2_cor.rds")
-drug_smiles_sim <- readRDS("~/Drug_splicing/data/drug_smiles_sim.rds")
+drug_smiles_sim <- readRDS("~/DRIVE/data/drug_smiles_sim.rds")
 drug_id <- drug_smiles_sim %>% select(id1,Drug) %>% distinct_all()
 mapping <- sample_meta %>% 
   select(Drug, DrugClass,Tissue_Source2) %>% 
@@ -324,6 +324,8 @@ dt1_summ <- dt1 %>% group_by(Drug_class1) %>%
   summarise(median_cor = median(cor)) %>% ungroup() %>% 
   arrange(median_cor)
 dt1$Drug_class1 <- factor(dt1$Drug_class1, levels = dt1_summ$Drug_class1)
+library(ggrain)
+library(ggsci)
 ggplot(dt1, aes(Drug_class1, cor, fill = Drug_class1)) +
   geom_rain(alpha = .5, point.args = list(alpha = 0),
             boxplot.args.pos = list(
@@ -387,7 +389,7 @@ cor_res_smile <- left_join(cor_res,
                              select(Drug1, Drug2, sim))
 cor_res_smile <- cor_res_smile %>% filter(!is.na(sim))
 
-drug_molformer_sim <- readRDS("~/Drug_splicing/data/drug_molformer_sim.rds")
+drug_molformer_sim <- readRDS("~/DRIVE/data/drug_molformer_sim.rds")
 cor_res_molformer <- left_join(cor_res,
                                drug_molformer_sim %>%
                                  rename(Drug1 = id1, Drug2 = id2) %>%
