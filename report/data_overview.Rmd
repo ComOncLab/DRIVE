@@ -15,6 +15,9 @@ options(max.print = "75")
 knitr::opts_chunk$set(echo = TRUE, comment = "#>", eval = TRUE, collapse = TRUE,cache = FALSE)
 knitr::opts_knit$set(width = 85)
 ```
+To systematically investigate the drug-induced transcriptomic response and their potential immunological implications, we collected and curated transcriptome data from drug-treated and control tumor cell lines from public repositories. To obtain consistent results, we applied uniform processing starting from the raw data. Notably, we combined large language model (LLM) techniques with meticulous manual curation to obtain high-confidence structural sample metadata. The model we used is Qwen3-30B-A3B-Instruct-2507. The code and prompt can be found in `scripts/get_meta_step1.ipynb` and `scripts/get_meta_step2.ipynb`. The code for raw FASTQ file processing can be found in `scripts/raw_data_processing`.
+
+After stringent quality control and a series of standardized processing steps (detailed in Methods), we systematically identified transcriptomic changes, alternative splicing (AS) variations, and predicted neoantigens derived from differential alternative splicing. Based on these comprehensive analytical outcomes, we constructed the DRIVE database and web server, providing a user-friendly online platform to facilitate access and downstream analysis.
 
 Following the careful manual inspection, the retained high-confidence datasets were subjected to further analysis (The final data consist of 3,911 samples from 243 datasets, involving 931 drug-cell treatments from 272 cancer cell lines and 278 treated drugs). The statistics of the curated data reveal the broad landscape of our collection. Specifically, the distribution of cell lines categorized by their tissue origin demonstrates a diverse representation across multiple cancer types. Similarly, the distribution of sample counts according to the treated drug types highlights a wide coverage of chemotherapeutic and targeted agents.
 

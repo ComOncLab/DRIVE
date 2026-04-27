@@ -7,7 +7,7 @@
 
         <meta name="author" content="Tao Wu" />
     
-        <meta name="date" content="2026-04-26" />
+        <meta name="date" content="2026-04-27" />
     
     <title>DRIVE: a comprehensive resource deciphering drug-induced transcriptomic response, alternative splicing, and splicing-derived neoantigens in cancer cell lines</title>
 
@@ -217,7 +217,7 @@ splicing-derived neoantigens in cancer cell lines</a></h2>
     <div id="postamble" data-toggle="wy-nav-shift" class="status">
                   <p class="author"><span class="glyphicon glyphicon-user"></span> Tao
 Wu</p>
-                        <p class="date"><span class="glyphicon glyphicon-calendar"></span> 2026-04-26</p>
+                        <p class="date"><span class="glyphicon glyphicon-calendar"></span> 2026-04-27</p>
           </div>
    </div>
      
@@ -239,6 +239,24 @@ Wu</p>
 </div>
 <div id="data-overview" class="section level1">
 <h1>Data overview</h1>
+<p>To systematically investigate the drug-induced transcriptomic
+response and their potential immunological implications, we collected
+and curated transcriptome data from drug-treated and control tumor cell
+lines from public repositories. To obtain consistent results, we applied
+uniform processing starting from the raw data. Notably, we combined
+large language model (LLM) techniques with meticulous manual curation to
+obtain high-confidence structural sample metadata. The model we used is
+Qwen3-30B-A3B-Instruct-2507. The code and prompt can be found in
+<code>scripts/get_meta_step1.ipynb</code> and
+<code>scripts/get_meta_step2.ipynb</code>. The code for raw FASTQ file
+processing can be found in <code>scripts/raw_data_processing</code>.</p>
+<p>After stringent quality control and a series of standardized
+processing steps (detailed in Methods), we systematically identified
+transcriptomic changes, alternative splicing (AS) variations, and
+predicted neoantigens derived from differential alternative splicing.
+Based on these comprehensive analytical outcomes, we constructed the
+DRIVE database and web server, providing a user-friendly online platform
+to facilitate access and downstream analysis.</p>
 <p>Following the careful manual inspection, the retained high-confidence
 datasets were subjected to further analysis (The final data consist of
 3,911 samples from 243 datasets, involving 931 drug-cell treatments from
@@ -867,20 +885,20 @@ an enhanced immune infiltration.</p>
 <span id="cb15-65"><a href="#cb15-65" tabindex="-1"></a><span class="co">#&gt; Warning: The default method for RunUMAP has changed from calling Python UMAP via reticulate to the R-native UWOT using the cosine metric</span></span>
 <span id="cb15-66"><a href="#cb15-66" tabindex="-1"></a><span class="co">#&gt; To use Python UMAP via reticulate, set umap.method to &#39;umap-learn&#39; and metric to &#39;correlation&#39;</span></span>
 <span id="cb15-67"><a href="#cb15-67" tabindex="-1"></a><span class="co">#&gt; This message will be shown once per session</span></span>
-<span id="cb15-68"><a href="#cb15-68" tabindex="-1"></a><span class="co">#&gt; 23:38:56 UMAP embedding parameters a = 0.9922 b = 1.112</span></span>
-<span id="cb15-69"><a href="#cb15-69" tabindex="-1"></a><span class="co">#&gt; 23:38:56 Read 7169 rows and found 50 numeric columns</span></span>
-<span id="cb15-70"><a href="#cb15-70" tabindex="-1"></a><span class="co">#&gt; 23:38:56 Using Annoy for neighbor search, n_neighbors = 30</span></span>
-<span id="cb15-71"><a href="#cb15-71" tabindex="-1"></a><span class="co">#&gt; 23:38:56 Building Annoy index with metric = cosine, n_trees = 50</span></span>
+<span id="cb15-68"><a href="#cb15-68" tabindex="-1"></a><span class="co">#&gt; 09:25:08 UMAP embedding parameters a = 0.9922 b = 1.112</span></span>
+<span id="cb15-69"><a href="#cb15-69" tabindex="-1"></a><span class="co">#&gt; 09:25:08 Read 7169 rows and found 50 numeric columns</span></span>
+<span id="cb15-70"><a href="#cb15-70" tabindex="-1"></a><span class="co">#&gt; 09:25:08 Using Annoy for neighbor search, n_neighbors = 30</span></span>
+<span id="cb15-71"><a href="#cb15-71" tabindex="-1"></a><span class="co">#&gt; 09:25:08 Building Annoy index with metric = cosine, n_trees = 50</span></span>
 <span id="cb15-72"><a href="#cb15-72" tabindex="-1"></a><span class="co">#&gt; 0%   10   20   30   40   50   60   70   80   90   100%</span></span>
 <span id="cb15-73"><a href="#cb15-73" tabindex="-1"></a><span class="co">#&gt; [----|----|----|----|----|----|----|----|----|----|</span></span>
 <span id="cb15-74"><a href="#cb15-74" tabindex="-1"></a><span class="co">#&gt; **************************************************|</span></span>
-<span id="cb15-75"><a href="#cb15-75" tabindex="-1"></a><span class="co">#&gt; 23:38:57 Writing NN index file to temp file /tmp/RtmpUkOzWI/file35d16b1e76e89</span></span>
-<span id="cb15-76"><a href="#cb15-76" tabindex="-1"></a><span class="co">#&gt; 23:38:57 Searching Annoy index using 1 thread, search_k = 3000</span></span>
-<span id="cb15-77"><a href="#cb15-77" tabindex="-1"></a><span class="co">#&gt; 23:38:59 Annoy recall = 100%</span></span>
-<span id="cb15-78"><a href="#cb15-78" tabindex="-1"></a><span class="co">#&gt; 23:39:00 Commencing smooth kNN distance calibration using 1 thread with target n_neighbors = 30</span></span>
-<span id="cb15-79"><a href="#cb15-79" tabindex="-1"></a><span class="co">#&gt; 23:39:00 Initializing from normalized Laplacian + noise (using RSpectra)</span></span>
-<span id="cb15-80"><a href="#cb15-80" tabindex="-1"></a><span class="co">#&gt; 23:39:01 Commencing optimization for 500 epochs, with 312894 positive edges</span></span>
-<span id="cb15-81"><a href="#cb15-81" tabindex="-1"></a><span class="co">#&gt; 23:39:08 Optimization finished</span></span>
+<span id="cb15-75"><a href="#cb15-75" tabindex="-1"></a><span class="co">#&gt; 09:25:09 Writing NN index file to temp file /tmp/RtmpzDb3He/file3898e11b1bacde</span></span>
+<span id="cb15-76"><a href="#cb15-76" tabindex="-1"></a><span class="co">#&gt; 09:25:09 Searching Annoy index using 1 thread, search_k = 3000</span></span>
+<span id="cb15-77"><a href="#cb15-77" tabindex="-1"></a><span class="co">#&gt; 09:25:11 Annoy recall = 100%</span></span>
+<span id="cb15-78"><a href="#cb15-78" tabindex="-1"></a><span class="co">#&gt; 09:25:11 Commencing smooth kNN distance calibration using 1 thread with target n_neighbors = 30</span></span>
+<span id="cb15-79"><a href="#cb15-79" tabindex="-1"></a><span class="co">#&gt; 09:25:12 Initializing from normalized Laplacian + noise (using RSpectra)</span></span>
+<span id="cb15-80"><a href="#cb15-80" tabindex="-1"></a><span class="co">#&gt; 09:25:12 Commencing optimization for 500 epochs, with 312894 positive edges</span></span>
+<span id="cb15-81"><a href="#cb15-81" tabindex="-1"></a><span class="co">#&gt; 09:25:19 Optimization finished</span></span>
 <span id="cb15-82"><a href="#cb15-82" tabindex="-1"></a><span class="fu">DimPlot</span>(sub_obj, <span class="at">reduction =</span> <span class="st">&quot;umap&quot;</span>, </span>
 <span id="cb15-83"><a href="#cb15-83" tabindex="-1"></a>        <span class="at">group.by =</span> <span class="fu">c</span>(<span class="st">&quot;sample_type&quot;</span>,<span class="st">&quot;immune_subtype_annotation&quot;</span>),<span class="at">ncol=</span><span class="dv">1</span>)</span>
 <span id="cb15-84"><a href="#cb15-84" tabindex="-1"></a><span class="co">#&gt; Warning: `aes_string()` was deprecated in ggplot2 3.0.0.</span></span>
