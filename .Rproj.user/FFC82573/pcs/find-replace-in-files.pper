@@ -1,20 +1,16 @@
 {
     "dialog-state": {
-        "query": "pubmed",
-        "path": "",
+        "query": "huarc_anno.csv",
+        "path": "~",
         "regex": false,
         "caseSensitive": false,
         "wholeWord": false,
-        "filePatterns": [
-            "*.r",
-            "*.R"
-        ],
+        "filePatterns": [],
         "useGitGrep": false,
         "excludeGitIgnore": true,
         "excludeFilePatterns": [],
         "resultsCount": 0,
         "errorCount": 0,
-        "replaceErrors": "",
-        "projectRelative": true
+        "replaceErrors": ""
     }
 }
