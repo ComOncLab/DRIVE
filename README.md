@@ -13,6 +13,10 @@ This repository contains code for the processing pipeline of raw data, reproduci
    - [translate into protein sequences](./scripts/raw_data_processing/run_jcast): predict peptides using [Jcast](https://github.com/ed-lau/jcast)
    - [predicting HLA binding](./scripts/raw_data_processing/run_binding): predicting HLA binding using NetMHCpan4.1
 2. [Shiny Web app](./scripts/Shiny): Code and resource for building Shiny app. 
-3. The data for analysis in manuscript and shiny app is available in Zenodo with DOI: 10.5281/zenodo.19816802
-4. The analysis report can be view online in https://comonclab.github.io/DRIVE/
+3. The data for analysis in manuscript and shiny app is available in Zenodo with DOI: 10.5281/zenodo.19816802. Important files include:
+  - Metadata file: `data/all_sample_meta.rds`
+  - Deseq results: `××_deseq.rds` in `scripts/Shiny/data/`
+  - rMats results: `××_rmats.rds` in `scripts/Shiny/data/`
+  - HLA binding peptides prediction: `××_binding_pep.rds` and `××_binding_pep_meta.rds` in `scripts/Shiny/data/`
+4. The analysis report the reproducibility of the manuscript results can be view online in https://comonclab.github.io/DRIVE/
 
