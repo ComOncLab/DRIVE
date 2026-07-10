@@ -20,3 +20,5 @@ This repository contains code for the processing pipeline of raw data, reproduci
   - HLA binding peptides prediction: `××_binding_pep.rds` and `××_binding_pep_meta.rds` in `scripts/Shiny/data/`
 4. The analysis report the reproducibility of the manuscript results can be view online in https://comonclab.github.io/DRIVE/
 
+#### Citation
+Wu, T., Tang, H.-F., and Wang, W. (2026). DRIVE: a comprehensive resource deciphering drug-induced transcriptomic and splicing response in cancer cell. Neoplasia 79, 101336. https://doi.org/10.1016/j.neo.2026.101336.
